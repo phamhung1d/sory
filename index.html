@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anh chỉ muốn nói là </title>
+    <style>
+        /* Toàn bộ thiết kế lấy cảm hứng từ hình ảnh image_0.png nhưng được nâng cấp sang trọng hơn */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Playfair Display', serif; /* Font chữ serif sang trọng cho lời chào */
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #fff1f3 0%, #fee2e6 100%); /* Bảng màu hồng phấn tinh tế */
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Khung chứa phong thư 3D */
+        .envelope-container {
+            position: relative;
+            width: 450px;
+            height: 300px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        /* Hiệu ứng phong thư 3D mở ra */
+        .envelope {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #ffb6c1; /* Màu nền phong thư mượt hơn */
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            transform-style: preserve-3d;
+            transition: transform 0.8s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Nắp phong thư 3D */
+        .envelope .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffadb9;
+            border-radius: 15px 15px 0 0;
+            transform-origin: top;
+            transition: transform 0.6s ease 0.2s;
+            z-index: 2;
+        }
+
+        /* Nắp phong thư mở ra */
+        .envelope-container.open .envelope {
+            transform: rotateX(15deg) translateY(-20px);
+        }
+
+        .envelope-container.open .envelope .flap {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        /* Trái tim niêm phong (nâng cấp thành 3D lấp lánh hơn) */
+        .heart-seal {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle at 30% 30%, #ff477e, #ff2a65);
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(255, 71, 126, 0.5), inset 0 -3px 5px rgba(0,0,0,0.2);
+            z-index: 3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* Lá thư nội dung (nâng cấp bố cục và font chữ) */
+        .letter {
+            position: absolute;
+            bottom: 0;
+            left: 20px;
+            right: 20px;
+            height: 90%;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+            transform-origin: bottom;
+            transition: transform 0.6s ease;
+            z-index: 1;
+            opacity: 0;
+            visibility: hidden;
+            border: 2px solid #fee2e6;
+        }
+
+        .envelope-container.open .letter {
+            transform: translateY(-80px); /* Lá thư trượt lên */
+            opacity: 1;
+            visibility: visible;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        /* Tiêu đề thư (Font serif, màu sắc sang trọng) */
+        .letter h2 {
+            font-family: 'Playfair Display', serif;
+            color: #d4a757; /* Màu vàng gold cao cấp */
+            margin-bottom: 20px;
+            font-size: 28px;
+            border-bottom: 2px solid #fee2e6;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        /* Nội dung thư (Font sans-serif, bố cục gọn) */
+        .letter p {
+            font-family: 'Open Sans', sans-serif;
+            color: #555;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            text-align: justify;
+        }
+
+        /* Hệ thống nút bấm (nâng cấp hoàn toàn) */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 15px;
+            position: relative;
+            height: 60px;
+        }
+
+        .btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: absolute;
+            width: auto;
+        }
+
+        /* Nút "Tha lỗi" (Gradient vàng gold, hiệu ứng lấp lánh) */
+        #btn-yes {
+            background: linear-gradient(45deg, #f7d794, #d4a757);
+            color: white;
+            left: calc(50% - 110px); /* Căn chỉnh vị trí ban đầu */
+            z-index: 2;
+        }
+
+        #btn-yes:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(212, 167, 87, 0.4);
+        }
+
+        /* Nút "Không" (Làm mờ, giữ nguyên tính năng chạy chỗ) */
+        #btn-no {
+            background-color: #ececec;
+            color: #aaa;
+            border: 1px solid #ddd;
+            right: calc(50% - 110px); /* Căn chỉnh vị trí ban đầu */
+            z-index: 100; /* Đảm bảo luôn nổi để chạy */
+        }
+
+        /* Hint hướng dẫn (Màu sắc tinh tế) */
+        .hint {
+            position: absolute;
+            bottom: -50px;
+            width: 100%;
+            text-align: center;
+            color: #ff8fa3;
+            font-size: 14px;
+            font-weight: bold;
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-5px); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Giao diện phong thư 3D mới -->
+    <div class="envelope-container" id="envelopeContainer" onclick="openLetter()">
+        <div class="envelope">
+            <div class="flap"></div>
+            <div class="heart-seal">❤️</div>
+        </div>
+        <div class="hint">Bấm để mở lời xin lỗi từ anh...</div>
+        
+        <!-- Lá thư nội dung cao cấp -->
+        <div class="letter" onclick="event.stopPropagation();">
+            <h2>Anh chỉ muốn nói là </h2>
+            <p>
+                Anh biết hôm qua anh đã dài dòng và tốn thời gian của em anh không biện hộ không lý do. Anh cũng không muốn vì số tiền đó mà em cảm tháy mang nợ hay gì cả tiền ấy như cái cớ để anh gặp em vậy em chuyển hết anh thấy giống như em không muốn gặp anh ấy. Anh sợ điều ấy lắm nên là em cho anh xin lõi nha.
+            </p>
+            <div class="btn-group">
+                <button class="btn" id="btn-yes" onclick="forgive()">Tha lỗi nè</button>
+                <button class="btn" id="btn-no" onmouseover="moveButton()" onclick="moveButton()">Không! Vẫn giận</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tải các font chữ sang trọng -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+    <script>
+        // Hàm mở phong thư 3D
+        function openLetter() {
+            const container = document.getElementById('envelopeContainer');
+            if (!container.classList.contains('open')) {
+                container.classList.add('open');
+                document.querySelector('.hint').textContent = "Quỳnh chọn đi mà...";
+            }
+        }
+
+        // Logic "bắt buộc phải tha lỗi" - Nút Không tự nhảy chỗ
+        function moveButton() {
+            const btnNo = document.getElementById('btn-no');
+            
+            // Lấy kích thước màn hình để giới hạn nút
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            
+            // Tính toán vị trí ngẫu nhiên
+            // Trừ bớt kích thước nút (khoảng 150px rộng, 50px cao) để không chạy ra ngoài
+            const randomX = Math.floor(Math.random() * (windowWidth - 160));
+            const randomY = Math.floor(Math.random() * (windowHeight - 60));
+            
+            // Chuyển nút sang dạng fixed để nhảy tự do
+            btnNo.style.position = 'fixed';
+            btnNo.style.left = randomX + 'px';
+            btnNo.style.top = randomY + 'px';
+            btnNo.style.right = 'auto'; // Xóa căn chỉnh cũ
+            btnNo.style.transition = 'all 0.1s ease'; // Nhảy nhanh để khó bấm
+        }
+
+        // Hàm xử lý khi được tha lỗi (Bạn có thể đổi sang link facebook như hướng dẫn trước)
+        function forgive() {
+            alert("Cảm ơn Quỳnh! Anh hứa sẽ trân trọng từng phút giây của Quỳnh từ nay về sau! ❤️");
+            // window.location.href = 'https://facebook.com/your_profile';
+        }
+    </script>
+</body>
+</html>
